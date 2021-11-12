@@ -1,2 +1,2 @@
-# jogodaforca
-Jogo da Forca com JSF
+# Jogo da Forca
+Jogo da Forca com JSF, Bootstrap e PrimeFaces
