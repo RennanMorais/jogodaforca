@@ -4,20 +4,82 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-
+import javax.faces.bean.SessionScoped;
 import com.jogodaforca.model.LetrasPalavra;
 
-@ViewScoped
+@SessionScoped
 @ManagedBean(name = "jogoBean")
 public class JogoDaForca {
 
-	private final String[] PALAVRAS = { "CACHORRO", "GATO", "CELULAR", "CARRO", "MOTO", "PASSEIO", "RODA", "TRABALHO", "AJUDAR", "CABELO", "FUTEBOL", "VOLEI", "NADAR", "COZINHAR", "PARALELEPIPEDO", "ESCOLA", "PAPEL", "BASQUETE", "PASTEL"};
 	private String palavra;
 	private LetrasPalavra letrasPalavra;
-	List<LetrasPalavra> letras = new ArrayList<LetrasPalavra>();
+	private List<LetrasPalavra> letras = new ArrayList<LetrasPalavra>();
 	private String letraJogada;
 	private int chances = 6;
+	private List<String> letrasUsadas = new ArrayList<String>();
+	
+
+	public void novaPalavra() {
+		
+		letrasUsadas.clear();
+		letras.clear();
+		chances = 6;
+		palavra = palavra.toUpperCase();
+		
+		for (int i = 0; i < palavra.length(); i++) {
+			
+			letrasPalavra = new LetrasPalavra();
+			letrasPalavra.setLetra(palavra.substring(i, i + 1));
+			letras.add(letrasPalavra);
+			// System.out.println(palavra.substring(i, i+1));
+
+		}
+		
+		palavra = "";
+
+	}
+
+	public void mostrarLetra() {
+
+		boolean acertou = false;
+		
+		for(int i=0; i < letras.size(); i++) {
+			
+			if(letras.get(i).getLetra().equalsIgnoreCase(letraJogada)) {
+				acertou = true;
+				letras.get(i).setContem(true);
+			}
+		}
+		
+		if(!acertou) {
+			chances--;
+		}
+		
+		letrasUsadas.add(letraJogada.toUpperCase());
+		letraJogada = "";
+
+	}
+	
+	public boolean isAcertou() {
+		
+		if(letras.isEmpty()) {
+			return false;
+		}
+		
+		for(int i=0; i < letras.size(); i++) {
+			
+			if(!letras.get(i).isContem()) {
+				return false;
+			}
+		
+		}
+		
+		return true;
+	}
+
+	public String getPalavra() {
+		return palavra;
+	}
 
 	public void setPalavra(String palavra) {
 		this.palavra = palavra;
@@ -47,41 +109,19 @@ public class JogoDaForca {
 		this.letraJogada = letraJogada;
 	}
 
-	public void novaPalavra() {
-		
-		letras.clear();
-		
-		Random prop = new Random();
-		int a = prop.nextInt(PALAVRAS.length);
-		palavra = PALAVRAS[a];
-
-		for (int i = 0; i < palavra.length(); i++) {
-			
-			letrasPalavra = new LetrasPalavra();
-			letrasPalavra.setLetra(palavra.substring(i, i + 1));
-			letras.add(letrasPalavra);
-			// System.out.println(palavra.substring(i, i+1));
-
-		}
-
+	public int getChances() {
+		return chances;
 	}
 
-	public void mostrarLetra() {
-
-		String letraJogadaM = letraJogada.toUpperCase();
-		
-		for(int i=0; i < letras.size(); i++) {
-			
-			if(letraJogadaM.equals(letras.get(i).getLetra())) {
-				letras.get(i).setContem(true);
-			} else {
-				chances -= 1;
-			}
-			
-		}
-		
-		letraJogada = "";
-
+	public void setChances(int chances) {
+		this.chances = chances;
 	}
 
+	public List<String> getLetrasUsadas() {
+		return letrasUsadas;
+	}
+
+	public void setLetrasUsadas(List<String> letrasUsadas) {
+		this.letrasUsadas = letrasUsadas;
+	}
 }
